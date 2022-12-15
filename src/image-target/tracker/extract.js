@@ -1,18 +1,18 @@
 import {Cumsum} from '../utils/cumsum.js';
 
-const SEARCH_SIZE1 = 10;
-const SEARCH_SIZE2 = 2;
+const SEARCH_SIZE1 = 10; // 0;
+const SEARCH_SIZE2 = 2; // 0;
 
 //const TEMPLATE_SIZE = 22 // DEFAULT
 const TEMPLATE_SIZE = 6;
 const TEMPLATE_SD_THRESH = 5.0;
-const MAX_SIM_THRESH = 0.95;
+const MAX_SIM_THRESH = 0.95; // 0.05;
 
-const MAX_THRESH = 0.9;
+const MAX_THRESH = 0.9; // 0.95;
 //const MIN_THRESH = 0.55;
-const MIN_THRESH = 0.2;
+const MIN_THRESH = 0.2; // 0.05;
 const SD_THRESH = 8.0;
-const OCCUPANCY_SIZE = 24 * 2 / 3;
+const OCCUPANCY_SIZE = 24 * 2 / 3; // 24 * 2 / 48;
 
 /*
  * Input image is in grey format. the imageData array size is width * height. value range from 0-255
@@ -89,6 +89,8 @@ const extract = (image) => {
   // reduce number of points according to dValue.
   // actually, the whole Step 1. might be better to just sort the dvalues and pick the top (0.02 * width * height) points
   const maxPoints = 0.02 * width * height;
+  // const maxPoints = width * height;
+  console.log(`maxPoints: ${maxPoints}`);
   let k = 999;
   let filteredCount = 0;
   while (k >= 0) {
@@ -176,7 +178,7 @@ const _selectFeature = (options) => {
   const yDiv = Math.floor(height / divSize);
 
   let maxFeatureNum = Math.floor(width / occSize) * Math.floor(height / occSize) + xDiv * yDiv;
-  //console.log("max feature num: ", maxFeatureNum);
+  console.log("max feature num: ", maxFeatureNum);
 
   const coords = [];
   const image2 = new Float32Array(imageData.length);

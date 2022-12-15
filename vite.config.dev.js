@@ -19,7 +19,7 @@ const moduleConfig={
             formats:['es']
         },
         rollupOptions:{
-            external:(id)=>(id==='three'||id.includes('three/examples/jsm/')||id.includes('three/addons/')),
+            // external:(id)=>(id==='three'||id.includes('three/examples/jsm/')||id.includes('three/addons/')),
             input:{
                 'mindar-image': './src/image-target/index.js',
                 'mindar-image-three': './src/image-target/three.js',
@@ -28,11 +28,11 @@ const moduleConfig={
             }
         },
     },
-    resolve:{
-        alias:{
-            'three/addons/':'three/examples/jsm/'
-        }
-    }
+    // resolve:{
+    //     alias:{
+    //         'three/addons/':'three/examples/jsm/'
+    //     }
+    // }
 };
 const faceAframeConfig=defineConfig({
     mode: 'development',

@@ -51,11 +51,13 @@ export class UI {
   }
   showScanning() {
     if (!this.scanningMask) return;
-    this.scanningMask.classList.remove("hidden");
+    // this.scanningMask.classList.remove("hidden");
+    this.scanningMask.style.display = "block";
   }
   hideScanning() {
     if (!this.scanningMask) return;
-    this.scanningMask.classList.add("hidden");
+    // this.scanningMask.classList.add("hidden");
+    this.scanningMask.style.display = "none";
   }
 
   _loadHTML(html) {

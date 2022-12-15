@@ -1,4 +1,7 @@
+import * as THREE from "three";
 import { Matrix4, Vector3, Quaternion, Scene, WebGLRenderer, PerspectiveCamera, Group, sRGBEncoding } from "three";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
+import {RGBELoader} from "three/examples/jsm/loaders/RGBELoader.js";
 import * as tf from '@tensorflow/tfjs';
 //import { CSS3DRenderer } from '../libs/CSS3DRenderer.js';
 import {CSS3DRenderer} from 'three/addons/renderers/CSS3DRenderer.js'
@@ -54,13 +57,9 @@ export class MindARThree {
     this.video.remove();
   }
 
-  addAnchor(targetIndex) {
-    const group = new Group();
-    group.visible = false;
-    group.matrixAutoUpdate = false;
-    const anchor = { group, targetIndex, onTargetFound: null, onTargetLost: null, css: false, visible: false };
+  addAnchor(targetIndex, groupIndex, onTargetFound, onTargetLost) {
+    const anchor = { group: groupIndex, targetIndex, onTargetFound, onTargetLost, css: false, visible: false };
     this.anchors.push(anchor);
-    this.scene.add(group);
     return anchor;
   }
 
@@ -128,14 +127,23 @@ export class MindARThree {
           if (data.type === 'updateMatrix') {
             const { targetIndex, worldMatrix } = data;
 
+            if (worldMatrix !== null) {
+              this.ui.hideScanning();
+            } else {
+              this.ui.showScanning();
+            }
+
             for (let i = 0; i < this.anchors.length; i++) {
               if (this.anchors[i].targetIndex === targetIndex) {
                 if (this.anchors[i].css) {
-                  this.anchors[i].group.children.forEach((obj) => {
-                    obj.element.style.visibility = worldMatrix === null ? "hidden" : "visible";
-                  });
+                  this.scene.children[this.anchors[i].group].children.forEach(
+                    (obj) => {
+                      obj.element.style.visibility =
+                        worldMatrix === null ? "hidden" : "visible";
+                    }
+                  );
                 } else {
-                  this.anchors[i].group.visible = worldMatrix !== null;
+                  this.scene.children[this.anchors[i].group].visible = worldMatrix !== null;
                 }
 
                 if (worldMatrix !== null) {
@@ -145,7 +153,7 @@ export class MindARThree {
                   if (this.anchors[i].css) {
                     m.multiply(cssScaleDownMatrix);
                   }
-                  this.anchors[i].group.matrix = m;
+                  this.scene.children[this.anchors[i].group].matrix = m;
                 }
 
                 if (this.anchors[i].visible && worldMatrix === null) {
@@ -160,10 +168,6 @@ export class MindARThree {
                   if (this.anchors[i].onTargetFound) {
                     this.anchors[i].onTargetFound();
                   }
-                }
-
-                if (worldMatrix !== null) {
-                  this.ui.hideScanning();
                 }
               }
             }
@@ -216,7 +220,7 @@ export class MindARThree {
     }
 
     const proj = this.controller.getProjectionMatrix();
-    const fov = 2 * Math.atan(1 / proj[5] / vh * container.clientHeight) * 180 / Math.PI; // vertical fov
+    const fov = 2 * Math.atan((1 / proj[5] / vh) * container.clientHeight) * 180 / Math.PI; // vertical fov
     const near = proj[14] / (proj[10] - 1.0);
     const far = proj[14] / (proj[10] + 1.0);
     const ratio = proj[5] / proj[0]; // (r-l) / (t-b)
@@ -259,5 +263,7 @@ if (!window.MINDAR.IMAGE) {
 }
 
 window.MINDAR.IMAGE.MindARThree = MindARThree;
-//window.MINDAR.IMAGE.THREE = THREE;
+window.MINDAR.IMAGE.THREE = THREE;
+window.MINDAR.IMAGE.GLTFLoader = GLTFLoader;
+window.MINDAR.IMAGE.RGBELoader = RGBELoader;
 window.MINDAR.IMAGE.tf = tf;

@@ -34,6 +34,7 @@ const _extractTrackingFeatures = (imageList, doneCallback) => {
   for (let i = 0; i < imageList.length; i++) {
     const image = imageList[i];
     const points = extract(image);
+    console.log(points);
 
     const featureSet = {
       data: image.data,
